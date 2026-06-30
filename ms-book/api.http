@@ -1,0 +1,55 @@
+@baseUrl = http://localhost:8080
+# Pega aquí el token generado en auth/api.http (o usa el endpoint de login de abajo)
+@token = pon_tu_token_aqui
+@bookId = 1
+
+### =========================
+### BOOK-SERVICE ENDPOINTS
+### =========================
+
+### 0. Login rápido para obtener token (opcional si ya tienes el token)
+# @name login
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "username": "suer",
+  "password": "1234"
+}
+
+###
+@token = {{login.response.body.token}}
+
+### 1. Obtener todos los libros
+GET {{baseUrl}}/api/v1/books
+Authorization: Bearer {{token}}
+
+### 2. Obtener un libro por ID
+GET {{baseUrl}}/api/v1/books/{{bookId}}
+Authorization: Bearer {{token}}
+
+### 3. Crear un nuevo libro
+POST {{baseUrl}}/api/v1/books
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "El Señor de los Anillos",
+  "author": "J.R.R. Tolkien",
+  "isbn": "978-8445000663"
+}
+
+### 4. Actualizar un libro existente
+PUT {{baseUrl}}/api/v1/books/{{bookId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "El Señor de los Anillos - Edición Ilustrada",
+  "author": "J.R.R. Tolkien",
+  "isbn": "978-8445000663"
+}
+
+### 5. Eliminar un libro
+DELETE {{baseUrl}}/api/v1/books/{{bookId}}
+Authorization: Bearer {{token}}

@@ -1,0 +1,29 @@
+@baseUrl = http://localhost:8080
+
+### =========================
+### AUTH ENDPOINTS
+### =========================
+
+### 1. Login (Obtener Token JWT)
+# @name login
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "username": "suer",
+  "password": "1234"
+}
+
+###
+# Guarda el token automáticamente en una variable para usarlo en otros microservicios si se ejecutan desde el mismo archivo,
+# pero en general, se puede copiar este token a los otros archivos api.http
+@token = {{login.response.body.token}}
+
+### 2. Login directo al microservicio (sin pasar por el Gateway)
+POST http://localhost:8081/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "suer",
+  "password": "1234"
+}

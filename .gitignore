@@ -1,0 +1,23 @@
+# Carpetas de construcción
+**/build/
+**/.gradle/
+**/bin/
+**/out/
+**/target/
+
+# Configuraciones de IDE
+.idea/
+.vscode/
+*.iml
+*.iws
+
+# Bases de datos y logs
+*.log
+*.db
+*.mv.db
+*.trace.db
+data/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db

@@ -1,0 +1,85 @@
+# API Gateway configuration (BFF).
+spring:
+  application:
+    name: apigateway
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: auth-health
+              uri: lb://auth
+              predicates:
+                - Path=/auth/health
+              filters:
+                - SetPath=/actuator/health
+            - id: auth-route-login
+              uri: lb://auth
+              predicates:
+                - Path=/login
+              filters:
+                - SetPath=/api/v1/auth/login
+            - id: auth-route
+              uri: lb://auth
+              predicates:
+                - Path=/api/v1/auth/**,/auth/**
+            - id: bff-health
+              uri: lb://bff
+              predicates:
+                - Path=/bff/health
+              filters:
+                - SetPath=/actuator/health
+            - id: bff-route
+              uri: lb://bff
+              predicates:
+                - Path=/api/v1/bff/**,/bff/**
+            - id: ms-book-health
+              uri: lb://ms-book
+              predicates:
+                - Path=/books/health
+              filters:
+                - SetPath=/actuator/health
+            - id: ms-book-route
+              uri: lb://ms-book
+              predicates:
+                - Path=/api/v1/books/**,/api/book/**
+            - id: ms-loan-health
+              uri: lb://ms-loan
+              predicates:
+                - Path=/loans/health
+              filters:
+                - SetPath=/actuator/health
+            - id: ms-loan-route
+              uri: lb://ms-loan
+              predicates:
+                - Path=/api/v1/loans/**,/api/loan/**
+            - id: ms-customer-health
+              uri: lb://ms-customer
+              predicates:
+                - Path=/customers/health
+              filters:
+                - SetPath=/actuator/health
+            - id: ms-customer-route
+              uri: lb://ms-customer
+              predicates:
+                - Path=/api/v1/customers/**
+
+# BFF public entrypoint port.
+server:
+  port: 8080
+
+# Register in Eureka and discover downstream services.
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    # Faster registry refresh in dev so newly started services are discovered sooner.
+    registry-fetch-interval-seconds: 5
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+
+# Shared JWT secret to validate tokens issued by auth service.
+jwt:
+  secret: ChangeThisSecretForDemoOnlyChangeThisSecret12345

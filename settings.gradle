@@ -1,0 +1,1 @@
+include 'apigateway', 'auth', 'bff', 'eureka', 'ms-book', 'ms-loan'
