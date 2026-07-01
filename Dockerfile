@@ -6,7 +6,7 @@ ARG MODULE
 WORKDIR /workspace
 
 COPY ${MODULE}/ ./
-RUN chmod +x gradlew && ./gradlew bootJar --no-daemon -x test
+RUN sed -i -e 's/\r$//' gradlew && chmod +x gradlew && ./gradlew bootJar --no-daemon -x test
 
 FROM eclipse-temurin:25-jre
 WORKDIR /app
