@@ -1,4 +1,4 @@
-# Arquitectura C3 - Lexicon Project
+# Arquitectura C4 - Lexicon Project
 
 Este documento ilustra la arquitectura de microservicios de **Lexicon** utilizando el estándar de diagramas de contenedores (C4 Model) implementado a través de Mermaid.JS. 
 

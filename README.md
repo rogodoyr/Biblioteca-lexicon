@@ -18,7 +18,7 @@
 
 El proyecto sigue un diseño de **Microservicios Aislados** con descubrimiento de red dinámico y seguridad perimetral.
 
-📌 **[Ver el Diagrama de Arquitectura Detallado (C3)](./diagramaC3.md)**
+📌 **[Ver el Diagrama de Arquitectura Detallado (C4)](./diagramaC4.md)**
 
 ### Componentes Principales:
 1. 🛡️ **API Gateway (`apigateway`)**: Actúa como el punto de entrada único al sistema. Maneja la validación de tokens JWT de forma centralizada.
