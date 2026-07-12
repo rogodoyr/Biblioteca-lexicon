@@ -1,0 +1,54 @@
+@baseUrl = http://localhost:8080
+@token = pon_tu_token_aqui
+@customerId = 1
+
+### =========================
+### CUSTOMER-SERVICE ENDPOINTS
+### =========================
+
+### 0. Login rápido para obtener token
+# @name login
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "username": "suer",
+  "password": "1234"
+}
+
+###
+@token = {{login.response.body.token}}
+
+### 1. Obtener todos los clientes
+GET {{baseUrl}}/api/v1/customers
+Authorization: Bearer {{token}}
+
+### 2. Obtener un cliente por ID
+GET {{baseUrl}}/api/v1/customers/{{customerId}}
+Authorization: Bearer {{token}}
+
+### 3. Crear un nuevo cliente
+POST {{baseUrl}}/api/v1/customers
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "rut": "12345678-9",
+  "name": "Juan Perez",
+  "email": "juan.perez@ejemplo.com"
+}
+
+### 4. Actualizar un cliente existente
+PUT {{baseUrl}}/api/v1/customers/{{customerId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "rut": "12345678-9",
+  "name": "Juan Perez Actualizado",
+  "email": "juan.nuevo@ejemplo.com"
+}
+
+### 5. Eliminar (desactivar) un cliente
+DELETE {{baseUrl}}/api/v1/customers/{{customerId}}
+Authorization: Bearer {{token}}

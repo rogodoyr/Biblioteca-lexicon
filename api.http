@@ -1,0 +1,41 @@
+@baseUrl = http://localhost:8080
+
+### 1. Auth Login (Obtener Token)
+# Selecciona y ejecuta esta petición primero.
+# Copia el token que te devuelve en la respuesta abajo.
+# @name login
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "password"
+}
+
+###
+
+# ==============================================================================
+# IMPORTANTE: Reemplaza "PEGA_TU_TOKEN_AQUI" con el token largo que obtuviste 
+# en el paso anterior antes de ejecutar las siguientes peticiones.
+# ==============================================================================
+@token = PEGA_TU_TOKEN_AQUI
+
+### 2. BFF - Get Consolidated Loan
+GET {{baseUrl}}/api/v1/bff/loans/1
+Authorization: Bearer {{token}}
+
+### 3. MS-Book - Get All Books
+GET {{baseUrl}}/api/v1/books
+Authorization: Bearer {{token}}
+
+### 4. MS-Loan - Get All Loans
+GET {{baseUrl}}/api/v1/loans
+Authorization: Bearer {{token}}
+
+### 5. MS-Customer - Get All Customers
+GET {{baseUrl}}/api/v1/customers
+Authorization: Bearer {{token}}
+
+### 6. Eureka - Get Registered Apps
+GET http://localhost:8761/eureka/apps
+Accept: application/json

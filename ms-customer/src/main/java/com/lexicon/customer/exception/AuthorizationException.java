@@ -1,0 +1,9 @@
+package com.lexicon.customer.exception;
+
+import org.springframework.http.HttpStatus;
+
+public class AuthorizationException extends ApiException {
+    public AuthorizationException(String message) {
+        super(message, HttpStatus.FORBIDDEN);
+    }
+}

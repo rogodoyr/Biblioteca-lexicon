@@ -1,0 +1,244 @@
+# Orquesta todos los servicios en una red interna de Docker.
+# Cada servicio expone su puerto para Swagger UI directamente.
+
+services:
+  eureka:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: eureka
+    container_name: eureka
+    ports:
+      - "8761:8761"
+    networks:
+      - microservices
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'echo > /dev/tcp/127.0.0.1/8761'"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+
+  auth:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: auth
+    container_name: auth
+    ports:
+      - "8081:8081"
+    environment:
+      "eureka.client.serviceUrl.defaultZone": http://eureka:8761/eureka
+      EUREKA_INSTANCE_HOSTNAME: auth
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
+    depends_on:
+      eureka:
+        condition: service_healthy
+    networks:
+      - microservices
+
+  ms-book:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: ms-book
+    container_name: ms-book
+    ports:
+      - "8082:8082"
+    environment:
+      "eureka.client.serviceUrl.defaultZone": http://eureka:8761/eureka
+      EUREKA_INSTANCE_HOSTNAME: ms-book
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
+    depends_on:
+      eureka:
+        condition: service_healthy
+    networks:
+      - microservices
+
+  ms-loan:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: ms-loan
+    container_name: ms-loan
+    ports:
+      - "8083:8083"
+    environment:
+      "eureka.client.serviceUrl.defaultZone": http://eureka:8761/eureka
+      EUREKA_INSTANCE_HOSTNAME: ms-loan
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
+    depends_on:
+      eureka:
+        condition: service_healthy
+    networks:
+      - microservices
+
+  ms-customer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: ms-customer
+    container_name: ms-customer
+    ports:
+      - "8084:8084"
+    environment:
+      "eureka.client.serviceUrl.defaultZone": http://eureka:8761/eureka
+      EUREKA_INSTANCE_HOSTNAME: ms-customer
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
+    depends_on:
+      eureka:
+        condition: service_healthy
+    networks:
+      - microservices
+
+  bff:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: bff
+    container_name: bff
+    ports:
+      - "8085:8085"
+    environment:
+      "eureka.client.serviceUrl.defaultZone": http://eureka:8761/eureka
+      EUREKA_INSTANCE_HOSTNAME: bff
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
+    depends_on:
+      eureka:
+        condition: service_healthy
+    networks:
+      - microservices
+
+  apigateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: apigateway
+    container_name: apigateway
+    ports:
+      - "8080:8080"
+    environment:
+      "eureka.client.serviceUrl.defaultZone": http://eureka:8761/eureka
+      EUREKA_INSTANCE_HOSTNAME: apigateway
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
+    depends_on:
+      eureka:
+        condition: service_healthy
+      auth:
+        condition: service_started
+      ms-book:
+        condition: service_started
+      ms-loan:
+        condition: service_started
+      ms-customer:
+        condition: service_started
+      bff:
+        condition: service_started
+    networks:
+      - microservices
+
+  ms-category:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: ms-category
+    container_name: ms-category
+    ports:
+      - "8086:8086"
+    environment:
+      "eureka.client.serviceUrl.defaultZone": http://eureka:8761/eureka
+      EUREKA_INSTANCE_HOSTNAME: ms-category
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
+    depends_on:
+      eureka:
+        condition: service_healthy
+    networks:
+      - microservices
+
+  ms-reservation:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: ms-reservation
+    container_name: ms-reservation
+    ports:
+      - "8087:8087"
+    environment:
+      "eureka.client.serviceUrl.defaultZone": http://eureka:8761/eureka
+      EUREKA_INSTANCE_HOSTNAME: ms-reservation
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
+    depends_on:
+      eureka:
+        condition: service_healthy
+    networks:
+      - microservices
+
+  ms-notification:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: ms-notification
+    container_name: ms-notification
+    ports:
+      - "8088:8088"
+    environment:
+      "eureka.client.serviceUrl.defaultZone": http://eureka:8761/eureka
+      EUREKA_INSTANCE_HOSTNAME: ms-notification
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
+    depends_on:
+      eureka:
+        condition: service_healthy
+    networks:
+      - microservices
+
+  ms-penalty:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: ms-penalty
+    container_name: ms-penalty
+    ports:
+      - "8089:8089"
+    environment:
+      "eureka.client.serviceUrl.defaultZone": http://eureka:8761/eureka
+      EUREKA_INSTANCE_HOSTNAME: ms-penalty
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
+    depends_on:
+      eureka:
+        condition: service_healthy
+    networks:
+      - microservices
+
+  ms-report:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: ms-report
+    container_name: ms-report
+    ports:
+      - "8090:8090"
+    environment:
+      "eureka.client.serviceUrl.defaultZone": http://eureka:8761/eureka
+      EUREKA_INSTANCE_HOSTNAME: ms-report
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
+    depends_on:
+      eureka:
+        condition: service_healthy
+    networks:
+      - microservices
+
+networks:
+  microservices:
+    driver: bridge

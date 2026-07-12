@@ -1,0 +1,135 @@
+# API Gateway configuration (BFF).
+spring:
+  application:
+    name: apigateway
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: auth-health
+              uri: lb://auth
+              predicates:
+                - Path=/auth/health
+              filters:
+                - SetPath=/actuator/health
+            - id: auth-route-login
+              uri: lb://auth
+              predicates:
+                - Path=/login
+              filters:
+                - SetPath=/api/v1/auth/login
+            - id: auth-route
+              uri: lb://auth
+              predicates:
+                - Path=/api/v1/auth/**,/auth/**
+            - id: bff-health
+              uri: lb://bff
+              predicates:
+                - Path=/bff/health
+              filters:
+                - SetPath=/actuator/health
+            - id: bff-route
+              uri: lb://bff
+              predicates:
+                - Path=/api/v1/bff/**,/bff/**
+            - id: ms-book-health
+              uri: lb://ms-book
+              predicates:
+                - Path=/books/health
+              filters:
+                - SetPath=/actuator/health
+            - id: ms-book-route
+              uri: lb://ms-book
+              predicates:
+                - Path=/api/v1/books/**,/api/book/**
+            - id: ms-loan-health
+              uri: lb://ms-loan
+              predicates:
+                - Path=/loans/health
+              filters:
+                - SetPath=/actuator/health
+            - id: ms-loan-route
+              uri: lb://ms-loan
+              predicates:
+                - Path=/api/v1/loans/**,/api/loan/**
+            - id: ms-customer-health
+              uri: lb://ms-customer
+              predicates:
+                - Path=/customers/health
+              filters:
+                - SetPath=/actuator/health
+            - id: ms-customer-route
+              uri: lb://ms-customer
+              predicates:
+                - Path=/api/v1/customers/**
+            - id: ms-category-health
+              uri: lb://ms-category
+              predicates:
+                - Path=/categories/health
+              filters:
+                - SetPath=/actuator/health
+            - id: ms-category-route
+              uri: lb://ms-category
+              predicates:
+                - Path=/api/v1/categories/**
+            - id: ms-reservation-health
+              uri: lb://ms-reservation
+              predicates:
+                - Path=/reservations/health
+              filters:
+                - SetPath=/actuator/health
+            - id: ms-reservation-route
+              uri: lb://ms-reservation
+              predicates:
+                - Path=/api/v1/reservations/**
+            - id: ms-notification-health
+              uri: lb://ms-notification
+              predicates:
+                - Path=/notifications/health
+              filters:
+                - SetPath=/actuator/health
+            - id: ms-notification-route
+              uri: lb://ms-notification
+              predicates:
+                - Path=/api/v1/notifications/**
+            - id: ms-penalty-health
+              uri: lb://ms-penalty
+              predicates:
+                - Path=/penalties/health
+              filters:
+                - SetPath=/actuator/health
+            - id: ms-penalty-route
+              uri: lb://ms-penalty
+              predicates:
+                - Path=/api/v1/penalties/**
+            - id: ms-report-health
+              uri: lb://ms-report
+              predicates:
+                - Path=/reports/health
+              filters:
+                - SetPath=/actuator/health
+            - id: ms-report-route
+              uri: lb://ms-report
+              predicates:
+                - Path=/api/v1/reports/**
+
+# BFF public entrypoint port.
+server:
+  port: 8080
+
+# Register in Eureka and discover downstream services.
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    # Faster registry refresh in dev so newly started services are discovered sooner.
+    registry-fetch-interval-seconds: 5
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+
+# Shared JWT secret to validate tokens issued by auth service.
+jwt:
+  secret: ChangeThisSecretForDemoOnlyChangeThisSecret12345

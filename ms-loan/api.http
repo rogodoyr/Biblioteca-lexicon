@@ -1,0 +1,58 @@
+@baseUrl = http://localhost:8080
+@token = pon_tu_token_aqui
+@loanId = 1
+
+### =========================
+### LOAN-SERVICE ENDPOINTS
+### =========================
+
+### 0. Login rápido para obtener token
+# @name login
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "username": "suer",
+  "password": "1234"
+}
+
+###
+@token = {{login.response.body.token}}
+
+### 1. Obtener todos los préstamos
+GET {{baseUrl}}/api/v1/loans
+Authorization: Bearer {{token}}
+
+### 2. Obtener un préstamo por ID
+GET {{baseUrl}}/api/v1/loans/{{loanId}}
+Authorization: Bearer {{token}}
+
+### 3. Crear un nuevo préstamo
+POST {{baseUrl}}/api/v1/loans
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "bookId": 1,
+  "userId": 1,
+  "loanDate": "2024-10-01",
+  "returnDate": "2024-10-15",
+  "status": "ACTIVE"
+}
+
+### 4. Actualizar un préstamo existente
+PUT {{baseUrl}}/api/v1/loans/{{loanId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "bookId": 1,
+  "userId": 1,
+  "loanDate": "2024-10-01",
+  "returnDate": "2024-10-20",
+  "status": "EXTENDED"
+}
+
+### 5. Eliminar un préstamo
+DELETE {{baseUrl}}/api/v1/loans/{{loanId}}
+Authorization: Bearer {{token}}

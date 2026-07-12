@@ -1,0 +1,24 @@
+@baseUrl = http://localhost:8080
+@token = pon_tu_token_aqui
+@loanId = 1
+
+### =========================
+### BFF ENDPOINTS (Orquestador)
+### =========================
+
+### 0. Login rápido para obtener token
+# @name login
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "username": "suer",
+  "password": "1234"
+}
+
+###
+@token = {{login.response.body.token}}
+
+### 1. Obtener detalles consolidados de un préstamo (combina ms-loan y ms-book)
+GET {{baseUrl}}/api/v1/bff/loans/{{loanId}}
+Authorization: Bearer {{token}}

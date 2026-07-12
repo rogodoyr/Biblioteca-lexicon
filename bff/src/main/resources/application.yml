@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: bff
+
+server:
+  port: 8085
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true
+
+# GlitchTip (Sentry-compatible)
+sentry:
+  dsn: ${SENTRY_DSN:}
+  release: ${SENTRY_RELEASE:0.0.1-SNAPSHOT}
+  environment: ${SENTRY_ENVIRONMENT:development}
+  traces-sample-rate: ${SENTRY_TRACES_SAMPLE_RATE:0.1}
+  send-default-pii: false
+  logs:
+    enabled: true
+  logging:
+    minimum-level: info
+    minimum-event-level: error
+    minimum-breadcrumb-level: debug
+    context-tags: requestId
+  exception-resolver-order: -2147483647
