@@ -21,9 +21,9 @@
 .factorypath
 
 # ===========================
-# Gradle wrapper (regenerable)
+# Gradle wrapper
 # ===========================
-**/gradle-wrapper.jar
+!**/gradle-wrapper.jar
 
 # ===========================
 # Bases de datos y logs

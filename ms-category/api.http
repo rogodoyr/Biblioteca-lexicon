@@ -1,6 +1,7 @@
+//api http categorias
 @baseUrl = http://localhost:8080
 @token = pon_tu_token_aqui
-@itemId = 1
+@itemId = 2
 
 ### =========================
 ### MS-CATEGORY ENDPOINTS
@@ -33,6 +34,8 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
+  "name": "deportivos",
+  "description": "Libros de deportes y actividades fisicas"
 }
 
 ### 4. Actualizar
@@ -41,6 +44,8 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
+  "name": "deportivos",
+  "description": "Libros sobre deportes y actividades fisicas"
 }
 
 ### 5. Eliminar
