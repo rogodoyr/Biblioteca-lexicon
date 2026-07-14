@@ -7,6 +7,14 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Load .env file if it exists (for GlitchTip DSN and other secrets)
+if [[ -f "$ROOT_DIR/.env" ]]; then
+  echo "[INFO] Loading environment variables from .env"
+  set -a
+  source "$ROOT_DIR/.env"
+  set +a
+fi
 RUN_DIR="$ROOT_DIR/.run"
 PID_DIR="$RUN_DIR/pids"
 LOG_DIR="$RUN_DIR/logs"
