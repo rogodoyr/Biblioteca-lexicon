@@ -1,5 +1,6 @@
 package com.lexicon.book.exception;
 
+import com.lexicon.book.glitchtip.GlitchTipErrorReporter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -7,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
 
 public class GlobalExceptionHandlerTest {
 
@@ -14,7 +16,8 @@ public class GlobalExceptionHandlerTest {
 
     @BeforeEach
     void setUp() {
-        exceptionHandler = new GlobalExceptionHandler();
+        GlitchTipErrorReporter errorReporter = mock(GlitchTipErrorReporter.class);
+        exceptionHandler = new GlobalExceptionHandler(errorReporter);
     }
 
     @Test

@@ -29,3 +29,26 @@ logging:
   level:
     root: INFO
     org.springframework.web: DEBUG
+
+# GlitchTip (Sentry-compatible)
+sentry:
+  dsn: ${SENTRY_DSN:}
+  release: ${SENTRY_RELEASE:0.0.1-SNAPSHOT}
+  environment: ${SENTRY_ENVIRONMENT:development}
+  traces-sample-rate: ${SENTRY_TRACES_SAMPLE_RATE:0.1}
+  send-default-pii: false
+  logs:
+    enabled: true
+  logging:
+    minimum-level: info
+    minimum-event-level: error
+    minimum-breadcrumb-level: debug
+    context-tags: requestId
+  exception-resolver-order: -2147483647
+
+# Springdoc / Swagger
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+  packages-to-scan: com.lexicon.customer.controller

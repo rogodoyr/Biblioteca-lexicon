@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 
-# Prueba de integracion simple para validar el flujo completo por API Gateway.
+# Prueba de integracion para validar el flujo completo por API Gateway.
 # Valida:
 # 1) /login responde 200 y entrega token.
 # 2) Sin token, endpoint protegido responde 401.
-# 3) Con token, product y store responden 200.
-# 4) Levanta servicios al inicio y los baja automaticamente al finalizar.
+# 3) Con token, todos los microservicios responden 200.
+# 4) BFF responde 200 con datos consolidados.
+# 5) Levanta servicios al inicio y los baja automaticamente al finalizar.
 
 set -euo pipefail
 
@@ -30,7 +31,6 @@ ok() { echo -e "${GREEN}[OK]${NC} $1"; }
 fail() { echo -e "${RED}[ERROR]${NC} $1"; exit 1; }
 
 cleanup() {
-  # Siempre intentamos bajar servicios al terminar (exito o error).
   if [[ -x "$STOP_SCRIPT" ]]; then
     info "Bajando servicios..."
     "$STOP_SCRIPT" || true
@@ -38,8 +38,6 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# Ejecuta request HTTP y deja resultado en variables globales:
-# HTTP_CODE y HTTP_BODY.
 api_call() {
   local method="$1"
   local url="$2"
@@ -62,7 +60,6 @@ api_call() {
     fi
   fi
 
-  # Treat temporary curl/network errors as HTTP 000 so callers can retry.
   if [[ "$curl_exit_code" -ne 0 ]]; then
     HTTP_CODE="000"
     HTTP_BODY=""
@@ -73,56 +70,24 @@ api_call() {
   HTTP_BODY="${response%$'\n'*}"
 }
 
-# Extrae token desde JSON de login sin depender de jq.
 extraer_token() {
   echo "$1" | sed -n 's/.*"token"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p'
 }
 
-esperar_gateway() {
-  local max_wait="$1"
-  local waited=0
-
-  while (( waited < max_wait )); do
-    if curl -sS "$GATEWAY_URL" >/dev/null 2>&1; then
-      return 0
-    fi
-    sleep 2
-    waited=$((waited + 2))
-  done
-
-  return 1
-}
-
-esperar_login_operativo() {
-  local max_wait="$1"
-  local waited=0
-  local login_json="$2"
-
-  while (( waited < max_wait )); do
-    api_call POST "$GATEWAY_URL/login" "$login_json"
-    if [[ "$HTTP_CODE" == "200" ]]; then
-      return 0
-    fi
-    info "Esperando /login... ${waited}s/${max_wait}s (ultimo HTTP $HTTP_CODE)"
-    sleep 2
-    waited=$((waited + 2))
-  done
-
-  return 1
-}
-
-esperar_endpoint_protegido() {
+esperar_endpoint() {
   local max_wait="$1"
   local endpoint_url="$2"
   local token="$3"
+  local method="${4:-GET}"
+  local body="${5:-}"
   local waited=0
 
   while (( waited < max_wait )); do
-    api_call GET "$endpoint_url" "" "$token"
+    api_call "$method" "$endpoint_url" "$body" "$token"
     if [[ "$HTTP_CODE" == "200" ]]; then
       return 0
     fi
-    info "Esperando endpoint $endpoint_url... ${waited}s/${max_wait}s (ultimo HTTP $HTTP_CODE)"
+    info "Esperando $endpoint_url... ${waited}s/${max_wait}s (HTTP $HTTP_CODE)"
     sleep 2
     waited=$((waited + 2))
   done
@@ -130,7 +95,29 @@ esperar_endpoint_protegido() {
   return 1
 }
 
-info "Iniciando prueba de integracion en $GATEWAY_URL"
+PASSED=0
+FAILED=0
+
+test_endpoint() {
+  local name="$1"
+  local method="$2"
+  local url="$3"
+  local body="${4:-}"
+
+  api_call "$method" "$url" "$body" "$TOKEN"
+  if [[ "$HTTP_CODE" == "200" ]]; then
+    ok "$name (HTTP $HTTP_CODE)"
+    PASSED=$((PASSED + 1))
+  else
+    fail "$name - Se esperaba 200, llego $HTTP_CODE"
+    FAILED=$((FAILED + 1))
+  fi
+}
+
+echo "============================================"
+echo "  LEXICON - Prueba de Integracion"
+echo "============================================"
+echo
 
 info "Paso 1: levantar servicios"
 [[ -x "$START_SCRIPT" ]] || fail "No existe o no es ejecutable: $START_SCRIPT"
@@ -138,40 +125,45 @@ info "Paso 1: levantar servicios"
 ok "Servicios iniciados"
 
 info "Paso 2: esperar disponibilidad del API Gateway"
-if ! esperar_gateway "$WAIT_SECONDS"; then
-  fail "Gateway no disponible despues de $WAIT_SECONDS segundos. Revisa logs en .run/logs"
+if ! esperar_endpoint "$WAIT_SECONDS" "$GATEWAY_URL" "" "GET"; then
+  fail "Gateway no disponible despues de $WAIT_SECONDS segundos"
 fi
 ok "Gateway accesible"
 
 login_json="{\"username\":\"$LOGIN_USER\",\"password\":\"$LOGIN_PASS\"}"
 
-info "Paso 3: esperar que /login este operativo en el gateway"
-if ! esperar_login_operativo "$WAIT_SECONDS" "$login_json"; then
-  fail "Se esperaba 200 en /login y no llego dentro de $WAIT_SECONDS segundos. Ultima respuesta: HTTP $HTTP_CODE - $HTTP_BODY"
+info "Paso 3: esperar que /login este operativo"
+if ! esperar_endpoint "$WAIT_SECONDS" "$GATEWAY_URL/login" "" "POST" "$login_json"; then
+  fail "Login no operativo despues de $WAIT_SECONDS segundos"
 fi
 ok "/login operativo"
 
 TOKEN="$(extraer_token "$HTTP_BODY")"
-[[ -n "$TOKEN" ]] || fail "No se encontro token en la respuesta de /login: $HTTP_BODY"
-ok "Login correcto y token generado"
+[[ -n "$TOKEN" ]] || fail "No se encontro token en la respuesta: $HTTP_BODY"
+ok "Token JWT obtenido"
 
-info "Paso 4: probar ms-customer sin token (debe ser 401)"
+info "Paso 4: verificar que sin token se bloquea (401)"
 api_call GET "$GATEWAY_URL/api/v1/customers"
-[[ "$HTTP_CODE" == "401" ]] || fail "Se esperaba 401 sin token y llego $HTTP_CODE. Respuesta: $HTTP_BODY"
-ok "ms-customer sin token se bloquea correctamente"
-
-info "Paso 5: probar ms-customer con token (debe ser 200)"
-if ! esperar_endpoint_protegido "$WAIT_SECONDS" "$GATEWAY_URL/api/v1/customers" "$TOKEN"; then
-  fail "ms-customer no estuvo listo dentro de $WAIT_SECONDS segundos. Ultima respuesta: HTTP $HTTP_CODE - $HTTP_BODY"
-fi
-ok "ms-customer responde correctamente con token"
-
-info "Paso 6: probar ms-book con token (debe ser 200)"
-if ! esperar_endpoint_protegido "$WAIT_SECONDS" "$GATEWAY_URL/api/v1/books" "$TOKEN"; then
-  fail "ms-book no estuvo listo dentro de $WAIT_SECONDS segundos. Ultima respuesta: HTTP $HTTP_CODE - $HTTP_BODY"
-fi
-ok "ms-book responde correctamente con token"
+[[ "$HTTP_CODE" == "401" ]] || fail "Se esperaba 401 sin token, llego $HTTP_CODE"
+ok "Auth correctamente bloquea sin token"
 
 echo
-ok "Integracion OK: login + validacion JWT + acceso a servicios protegidos funcionando"
+info "Paso 5: probando todos los microservicios"
+echo "--------------------------------------------"
+
+test_endpoint "ms-book      GET /api/v1/books"        GET  "$GATEWAY_URL/api/v1/books"
+test_endpoint "ms-loan      GET /api/v1/loans"        GET  "$GATEWAY_URL/api/v1/loans"
+test_endpoint "ms-customer  GET /api/v1/customers"    GET  "$GATEWAY_URL/api/v1/customers"
+test_endpoint "ms-category  GET /api/v1/categories"   GET  "$GATEWAY_URL/api/v1/categories"
+test_endpoint "ms-reservation GET /api/v1/reservations" GET "$GATEWAY_URL/api/v1/reservations"
+test_endpoint "ms-notification GET /api/v1/notifications" GET "$GATEWAY_URL/api/v1/notifications"
+test_endpoint "ms-penalty   GET /api/v1/penalties"    GET  "$GATEWAY_URL/api/v1/penalties"
+test_endpoint "ms-report    GET /api/v1/reports"      GET  "$GATEWAY_URL/api/v1/reports"
+test_endpoint "bff          GET /api/v1/bff/loans/1"  GET  "$GATEWAY_URL/api/v1/bff/loans/1"
+
+echo
+echo "============================================"
+echo "  RESULTADO: $PASSED pruebas pasaron"
+echo "============================================"
+ok "Todas las pruebas de integracion completadas exitosamente"
 ok "El apagado automatico se ejecutara al salir"

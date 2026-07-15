@@ -1,3 +1,4 @@
+// api http prestamos
 @baseUrl = http://localhost:8080
 @token = pon_tu_token_aqui
 @loanId = 1

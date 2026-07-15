@@ -13,6 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Servicio para la gestion de clientes.
+ * Proporciona operaciones CRUD completas sobre los clientes de la biblioteca.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -20,6 +24,11 @@ public class CustomerService {
 
     private final CustomerRepository customerRepository;
 
+    /**
+     * Crea un nuevo cliente en el sistema.
+     * @param requestDto DTO con los datos del cliente a crear
+     * @return DTO de respuesta con el cliente creado y su ID generado
+     */
     @Transactional
     public CustomerResponseDto createCustomer(CustomerRequestDto requestDto) {
         log.info("Creating new customer with RUT: {}", requestDto.getRut());
@@ -29,11 +38,15 @@ public class CustomerService {
                 .email(requestDto.getEmail())
                 .status(true)
                 .build();
-        
+
         Customer savedCustomer = customerRepository.save(customer);
         return mapToDto(savedCustomer);
     }
 
+    /**
+     * Obtiene todos los clientes del sistema.
+     * @return Lista de clientes como DTOs de respuesta
+     */
     @Transactional(readOnly = true)
     public List<CustomerResponseDto> getAllCustomers() {
         log.info("Fetching all customers");
@@ -42,6 +55,12 @@ public class CustomerService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Obtiene un cliente por su ID.
+     * @param id Identificador unico del cliente
+     * @return DTO de respuesta con los datos del cliente
+     * @throws CustomerNotFoundException si no se encuentra el cliente
+     */
     @Transactional(readOnly = true)
     public CustomerResponseDto getCustomerById(Long id) {
         log.info("Fetching customer with ID: {}", id);
@@ -50,6 +69,13 @@ public class CustomerService {
         return mapToDto(customer);
     }
 
+    /**
+     * Actualiza un cliente existente.
+     * @param id Identificador del cliente a actualizar
+     * @param requestDto DTO con los nuevos datos del cliente
+     * @return DTO de respuesta con el cliente actualizado
+     * @throws CustomerNotFoundException si no se encuentra el cliente
+     */
     @Transactional
     public CustomerResponseDto updateCustomer(Long id, CustomerRequestDto requestDto) {
         log.info("Updating customer with ID: {}", id);
@@ -59,17 +85,22 @@ public class CustomerService {
         customer.setRut(requestDto.getRut());
         customer.setName(requestDto.getName());
         customer.setEmail(requestDto.getEmail());
-        
+
         Customer updatedCustomer = customerRepository.save(customer);
         return mapToDto(updatedCustomer);
     }
 
+    /**
+     * Desactiva un cliente del sistema (soft delete).
+     * @param id Identificador del cliente a desactivar
+     * @throws CustomerNotFoundException si no se encuentra el cliente
+     */
     @Transactional
     public void deactivateCustomer(Long id) {
         log.info("Deactivating customer with ID: {}", id);
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer not found with ID: " + id));
-        
+
         customer.setStatus(false);
         customerRepository.save(customer);
     }

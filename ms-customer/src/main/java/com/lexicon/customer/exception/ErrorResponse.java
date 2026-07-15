@@ -1,4 +1,4 @@
-package com.lexicon.book.exception;
+package com.lexicon.customer.exception;
 
 import java.time.LocalDateTime;
 

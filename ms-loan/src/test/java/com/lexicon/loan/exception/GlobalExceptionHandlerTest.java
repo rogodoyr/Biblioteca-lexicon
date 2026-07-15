@@ -1,4 +1,6 @@
 package com.lexicon.loan.exception;
+import static org.mockito.Mockito.mock;
+import com.lexicon.loan.glitchtip.GlitchTipErrorReporter;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +16,7 @@ public class GlobalExceptionHandlerTest {
 
     @BeforeEach
     void setUp() {
-        exceptionHandler = new GlobalExceptionHandler();
+        exceptionHandler = new GlobalExceptionHandler(mock(com.lexicon.loan.glitchtip.GlitchTipErrorReporter.class));
     }
 
     @Test

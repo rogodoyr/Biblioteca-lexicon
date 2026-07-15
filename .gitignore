@@ -1,26 +1,119 @@
-# Carpetas de construcción
+# ===========================
+# Carpetas de construccion
+# ===========================
 **/build/
 **/.gradle/
 **/bin/
 **/out/
 **/target/
 
+# ===========================
 # Configuraciones de IDE
+# ===========================
 .idea/
 .vscode/
 *.iml
 *.iws
+*.ipr
+.project
+.classpath
+.settings/
+.factorypath
 
+# ===========================
+# Gradle wrapper
+# ===========================
+!**/gradle-wrapper.jar
+
+# ===========================
 # Bases de datos y logs
+# ===========================
 *.log
 *.db
 *.mv.db
 *.trace.db
 data/
 
+# ===========================
 # Sistema operativo
+# ===========================
 .DS_Store
 Thumbs.db
+Desktop.ini
+ehthumbs.db
 
-# Carpetas de ejecución local
+# ===========================
+# Carpetas de ejecucion local
+# ===========================
 .run/
+
+# ===========================
+# Variables de entorno y secretos
+# ===========================
+.env
+.env.*
+*.env
+**/*.env
+.env.local
+.env.production
+
+# ===========================
+# Tokens, claves, credenciales
+# ===========================
+**/credentials*.json
+**/service-account*.json
+**/secret*.json
+**/*-secret*
+**/token*.json
+**/*-key*
+**/*.pem
+**/*.key
+**/*.p12
+**/*.jks
+
+# ===========================
+# Sentry / GlitchTip DSN
+# ===========================
+# No subir DSN de Sentry ni tokens de GlitchTip
+
+# ===========================
+# MiMoCode (herramienta de desarrollo)
+# ===========================
+.mimocode/
+AGENTS.md
+
+# ===========================
+# Docker (archivos generados)
+# ===========================
+docker-compose.override.yml
+
+# ===========================
+# Node (si se usa para algo)
+# ===========================
+node_modules/
+package-lock.json
+
+# ===========================
+# Python (si se usa para scripts)
+# ===========================
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# ===========================
+# Temporales y archivos de backup
+# ===========================
+*.tmp
+*.bak
+*.swp
+*~
+\#*\#
+.#*
+
+# ===========================
+# Archivos de cobertura de codigo
+# ===========================
+**/jacoco.exec
+**/coverage/
+**/.coverage
