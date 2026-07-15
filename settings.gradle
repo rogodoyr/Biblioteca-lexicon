@@ -1,1 +1,1 @@
-include 'apigateway', 'auth', 'bff', 'eureka', 'ms-book', 'ms-loan', 'ms-customer'
+include 'apigateway', 'auth', 'bff', 'eureka', 'ms-book', 'ms-loan', 'ms-customer', 'ms-category', 'ms-reservation', 'ms-notification', 'ms-penalty', 'ms-report'

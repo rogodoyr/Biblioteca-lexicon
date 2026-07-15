@@ -13,6 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Servicio para la gestion de prestamos.
+ * Proporciona operaciones CRUD completas sobre los prestamos de libros.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -20,6 +24,10 @@ public class LoanService {
 
     private final LoanRepository loanRepository;
 
+    /**
+     * Obtiene todos los prestamos del sistema.
+     * @return Lista de prestamos como DTOs de respuesta
+     */
     @Transactional(readOnly = true)
     public List<LoanResponseDto> getAllLoans() {
         log.info("Fetching all loans");
@@ -28,6 +36,12 @@ public class LoanService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Obtiene un prestamo por su ID.
+     * @param id Identificador unico del prestamo
+     * @return DTO de respuesta con los datos del prestamo
+     * @throws ResourceNotFoundException si no se encuentra el prestamo
+     */
     @Transactional(readOnly = true)
     public LoanResponseDto getLoanById(Long id) {
         log.info("Fetching loan with id: {}", id);
@@ -39,6 +53,11 @@ public class LoanService {
         return mapToResponseDto(loan);
     }
 
+    /**
+     * Crea un nuevo prestamo en el sistema.
+     * @param requestDto DTO con los datos del prestamo a crear
+     * @return DTO de respuesta con el prestamo creado y su ID generado
+     */
     @Transactional
     public LoanResponseDto createLoan(LoanRequestDto requestDto) {
         log.info("Creating new loan for bookId: {}", requestDto.getBookId());
@@ -54,6 +73,13 @@ public class LoanService {
         return mapToResponseDto(savedLoan);
     }
 
+    /**
+     * Actualiza un prestamo existente.
+     * @param id Identificador del prestamo a actualizar
+     * @param requestDto DTO con los nuevos datos del prestamo
+     * @return DTO de respuesta con el prestamo actualizado
+     * @throws ResourceNotFoundException si no se encuentra el prestamo
+     */
     @Transactional
     public LoanResponseDto updateLoan(Long id, LoanRequestDto requestDto) {
         log.info("Updating loan with id: {}", id);
@@ -74,6 +100,11 @@ public class LoanService {
         return mapToResponseDto(updatedLoan);
     }
 
+    /**
+     * Elimina un prestamo del sistema.
+     * @param id Identificador del prestamo a eliminar
+     * @throws ResourceNotFoundException si no se encuentra el prestamo
+     */
     @Transactional
     public void deleteLoan(Long id) {
         log.info("Deleting loan with id: {}", id);

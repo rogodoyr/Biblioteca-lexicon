@@ -9,7 +9,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 RUN_DIR="$ROOT_DIR/.run"
 PID_DIR="$RUN_DIR/pids"
 
-modules=("apigateway" "bff" "ms-customer" "ms-loan" "ms-book" "auth" "eureka")
+modules=("apigateway" "bff" "ms-report" "ms-penalty" "ms-notification" "ms-reservation" "ms-category" "ms-customer" "ms-loan" "ms-book" "auth" "eureka")
 
 is_running() {
   local pid="$1"

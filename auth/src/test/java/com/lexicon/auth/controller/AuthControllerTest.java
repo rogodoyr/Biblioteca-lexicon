@@ -5,6 +5,7 @@ import com.lexicon.auth.dto.LoginRequestDto;
 import com.lexicon.auth.dto.TokenResponseDto;
 import com.lexicon.auth.exception.GlobalExceptionHandler;
 import com.lexicon.auth.exception.InvalidCredentialsException;
+import com.lexicon.auth.glitchtip.GlitchTipErrorReporter;
 import com.lexicon.auth.service.AuthService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,9 @@ class AuthControllerTest {
 
     @MockitoBean
     private AuthService authService;
+
+    @MockitoBean
+    private GlitchTipErrorReporter glitchTipErrorReporter;
 
     @Test
     void login_Success() throws Exception {

@@ -1,7 +1,7 @@
 @baseUrl = http://localhost:8080
 # Pega aquí el token generado en auth/api.http (o usa el endpoint de login de abajo)
 @token = pon_tu_token_aqui
-@bookId = 1
+@bookId = 4
 
 ### =========================
 ### BOOK-SERVICE ENDPOINTS
