@@ -1,4 +1,4 @@
-package com.lexicon.customer.exception;
+package com.lexicon.book.exception;
 
 import org.springframework.http.HttpStatus;
 

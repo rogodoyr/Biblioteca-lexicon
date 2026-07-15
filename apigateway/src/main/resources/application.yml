@@ -63,56 +63,6 @@ spring:
               uri: lb://ms-customer
               predicates:
                 - Path=/api/v1/customers/**
-            - id: ms-category-health
-              uri: lb://ms-category
-              predicates:
-                - Path=/categories/health
-              filters:
-                - SetPath=/actuator/health
-            - id: ms-category-route
-              uri: lb://ms-category
-              predicates:
-                - Path=/api/v1/categories/**
-            - id: ms-reservation-health
-              uri: lb://ms-reservation
-              predicates:
-                - Path=/reservations/health
-              filters:
-                - SetPath=/actuator/health
-            - id: ms-reservation-route
-              uri: lb://ms-reservation
-              predicates:
-                - Path=/api/v1/reservations/**
-            - id: ms-notification-health
-              uri: lb://ms-notification
-              predicates:
-                - Path=/notifications/health
-              filters:
-                - SetPath=/actuator/health
-            - id: ms-notification-route
-              uri: lb://ms-notification
-              predicates:
-                - Path=/api/v1/notifications/**
-            - id: ms-penalty-health
-              uri: lb://ms-penalty
-              predicates:
-                - Path=/penalties/health
-              filters:
-                - SetPath=/actuator/health
-            - id: ms-penalty-route
-              uri: lb://ms-penalty
-              predicates:
-                - Path=/api/v1/penalties/**
-            - id: ms-report-health
-              uri: lb://ms-report
-              predicates:
-                - Path=/reports/health
-              filters:
-                - SetPath=/actuator/health
-            - id: ms-report-route
-              uri: lb://ms-report
-              predicates:
-                - Path=/api/v1/reports/**
 
 # BFF public entrypoint port.
 server:

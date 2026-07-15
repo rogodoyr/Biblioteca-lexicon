@@ -5,7 +5,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.lexicon.loan.dto.LoanRequestDto;
 import com.lexicon.loan.dto.LoanResponseDto;
 import com.lexicon.loan.exception.ResourceNotFoundException;
-import com.lexicon.loan.glitchtip.GlitchTipErrorReporter;
 import com.lexicon.loan.service.LoanService;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,9 +33,6 @@ public class LoanControllerTest {
 
     @MockitoBean
     private LoanService loanService;
-
-    @MockitoBean
-    private GlitchTipErrorReporter glitchTipErrorReporter;
 
     @Autowired
     private ObjectMapper objectMapper;

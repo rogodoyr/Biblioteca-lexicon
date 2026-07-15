@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lexicon.book.dto.BookRequestDto;
 import com.lexicon.book.dto.BookResponseDto;
 import com.lexicon.book.exception.ResourceNotFoundException;
-import com.lexicon.book.glitchtip.GlitchTipErrorReporter;
 import com.lexicon.book.service.BookService;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,9 +31,6 @@ public class BookControllerTest {
 
     @MockitoBean
     private BookService bookService;
-
-    @MockitoBean
-    private GlitchTipErrorReporter glitchTipErrorReporter;
 
     @Autowired
     private ObjectMapper objectMapper;
